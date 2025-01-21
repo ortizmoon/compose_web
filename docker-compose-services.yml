@@ -41,41 +41,40 @@ services:
     image: custom-mariadb-alpine:latest
     ports:
       - "3306:3306"
-    environment:
-      MYSQL_ROOT_PASSWORD: 6d520a3373ce552c4fd8cd4ad12e2d36029342daa95f6a84db617953b3f9bcac
-      MYSQL_DATABASE: appbase
-      MYSQL_USER: sqluser
-      MYSQL_PASSWORD: 8a1b4f70831e67c6d675fee7713d58195509f8bedc9fd8d11a
+    env_file:
+      - ./mariadb/mariadb.env
     container_name: mariadb
     volumes:
       - ${MYSQL_DATA}:/var/lib/mysql
     restart: always
     networks:
       - app_network
-  #prometheus:
-  #  image: prom/prometheus:latest
-  #  container_name: prometheus
-  #  volumes:
-  #    - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
-  #    - ./prometeus/data:/prometeus
-  #  ports:
-  #    - "9090:9090"
-  #  restart: always
-  #  networks:
-  #    - app_network
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    volumes:
+      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/data:/prometheus
+    ports:
+      - "9090:9090"
+    restart: always
+    networks:
+      - app_network
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3000:3000"
-    environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+    env_file:
+      - ./grafana/grafana.env
     volumes:
       - ./grafana/data:/var/lib/grafana
+      - ./grafana/data/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
     restart: always
     networks:
       - app_network
+    depends_on:
+      - mariadb
 networks:
   app_network:
     driver: bridge
