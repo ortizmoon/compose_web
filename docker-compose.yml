@@ -18,6 +18,8 @@ services:
     restart: always
     networks:
       - app_network
+    depends_on:
+      - mariadb 
   php:
     build:
       context: .
@@ -47,6 +49,30 @@ services:
     container_name: mariadb
     volumes:
       - ${MYSQL_DATA}:/var/lib/mysql
+    restart: always
+    networks:
+      - app_network
+  #prometheus:
+  #  image: prom/prometheus:latest
+  #  container_name: prometheus
+  #  volumes:
+  #    - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+  #    - ./prometeus/data:/prometeus
+  #  ports:
+  #    - "9090:9090"
+  #  restart: always
+  #  networks:
+  #    - app_network
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./grafana/data:/var/lib/grafana
     restart: always
     networks:
       - app_network
