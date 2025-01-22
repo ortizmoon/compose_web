@@ -1,0 +1,12 @@
+CREATE DATABASE IF NOT EXISTS grafana;
+
+CREATE USER 'grafana'@'%' IDENTIFIED BY '1234567890';
+
+GRANT ALL PRIVILEGES ON grafana.* TO 'grafana'@'%';
+
+-- Создание пользователя 'exporter' с паролем
+CREATE USER 'exporter'@'%' IDENTIFIED BY '0987654321';
+
+GRANT SHOW DATABASES, PROCESS, REPLICATION CLIENT, SLAVE MONITOR, SELECT ON *.* TO 'exporter'@'%';
+
+FLUSH PRIVILEGES;

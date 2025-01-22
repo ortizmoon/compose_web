@@ -1,4 +1,3 @@
-
 services:
   nginx:
     build:
@@ -6,34 +5,36 @@ services:
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-      dockerfile: ${NGINX_DIR}/Dockerfile
+      dockerfile: ./nginx/Dockerfile
     image: custom-nginx-alpine:latest
     container_name: nginx
     ports:
       - "80:80"
     volumes:
-      - ${WWW_DIR}:/var/www/html
-#      - ${NGINX_DIR}/nginx.conf:/etc/nginx/nginx.conf
-      - ${NGINX_DIR}/default.conf:/etc/nginx/conf.d/default.conf
+      - ${WWW}:/var/www/html
+#      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf/default.conf:/etc/nginx/conf.d/default.conf
     restart: always
     networks:
       - app_network
     depends_on:
-      - mariadb 
+      - mariadb
+#---------------------------------------
   php:
     build:
       context: .
       args:
         - UID=${UID:-1000}
         - GID=${GID:-1000}
-      dockerfile: ${PHP_DIR}/Dockerfile
+      dockerfile: ./php/Dockerfile
     image: custom-php8.4-alpine:latest
     container_name: php
     volumes:
-      - ${WWW_DIR}:/var/www/html
+      - ${WWW}:/var/www/html
     restart: always
     networks:
       - app_network
+#---------------------------------------
   mariadb:
     build:
       context: .
@@ -42,37 +43,54 @@ services:
     ports:
       - "3306:3306"
     env_file:
-      - ./mariadb/mariadb.env
+      - ./mariadb/conf/mariadb.env
     container_name: mariadb
     volumes:
-      - ${MYSQL_DATA}:/var/lib/mysql
+      - ./mariadb/data:/var/lib/mysql
+      - ./mariadb/conf/init.sql:/docker-entrypoint-initdb.d/init.sql
     restart: always
     networks:
       - app_network
+#---------------------------------------
   prometheus:
     image: prom/prometheus:latest
     container_name: prometheus
     volumes:
-      - ./prometheus/config/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/conf/prometheus.yml:/etc/prometheus/prometheus.yml
       - ./prometheus/data:/prometheus
     ports:
       - "9090:9090"
     restart: always
     networks:
       - app_network
+#---------------------------------------
   grafana:
     image: grafana/grafana:latest
     container_name: grafana
     ports:
       - "3000:3000"
     env_file:
-      - ./grafana/grafana.env
+      - ./grafana/conf/grafana.env
     volumes:
       - ./grafana/data:/var/lib/grafana
-      - ./grafana/data/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
+      - ./grafana/conf/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml
     restart: always
     networks:
       - app_network
+    depends_on:
+      - mariadb
+#---------------------------------------
+  mysqld-exporter:
+    image: prom/mysqld-exporter:latest
+    container_name: mysqld-exporter
+    command:
+      - "--mysqld.username=exporter:0987654321"
+      - "--mysqld.address=mariadb:3306"
+    ports:
+      - "9104:9104"
+    networks:
+      - app_network
+    restart: always
     depends_on:
       - mariadb
 networks:

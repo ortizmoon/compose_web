@@ -1,2 +1,4 @@
 .DS_Store
+grafana/data
 mariadb/data
+prometheus/data
