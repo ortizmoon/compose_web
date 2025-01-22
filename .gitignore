@@ -1,4 +1,4 @@
 .DS_Store
-grafana/data
-mariadb/data
-prometheus/data
+grafana/data/
+mariadb/data/
+prometheus/data/
