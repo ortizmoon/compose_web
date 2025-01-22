@@ -1,11 +1,15 @@
 global:
-  scrape_interval: 15s  # Интервал опроса метрик с целей
+  scrape_interval: 15s
 
 scrape_configs:
   - job_name: 'prometheus'
     static_configs:
-      - targets: ['prometheus:9090']  # Подключаем сам Prometheus
+      - targets: ['prometheus:9090']
 
   - job_name: 'mariadb'
     static_configs:
       - targets: ['mysqld-exporter:9104']
+
+  - job_name: 'nginx'
+    static_configs:
+      - targets: ['nginx-exporter:9113']
