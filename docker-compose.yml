@@ -41,7 +41,7 @@ services:
     build:
       context: .
       dockerfile: ./mariadb/Dockerfile
-    image: custom-mariadb-alpine:latest
+    image: custom-mariadb:latest
     ports:
       - "3306:3306"
     env_file:
@@ -120,7 +120,6 @@ services:
       - /sys:/sys:ro
       - /dev:/dev:ro
       - /run:/run:ro
-      - /proc:/proc:ro
     networks:
       - ${NETWORK}
     restart: always
@@ -128,7 +127,6 @@ services:
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
     container_name: cadvisor
-    privileged: true
     ports:
       - "8081:8080"
     volumes:

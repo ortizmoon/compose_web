@@ -26,11 +26,12 @@ RUN sed -i 's/group = www-data/group = ${USERNAME}/g' /usr/local/etc/php-fpm.d/w
 #    libpng-dev \
 #   iproute2 \
 #    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-#    && docker-php-ext-install pdo pdo_mysql
+#   && docker-php-ext-install pdo pdo_mysql
+
 RUN apk update && apk add --no-cache \
     freetype-dev \
     libjpeg-turbo-dev \
     libpng-dev \
     iproute2 \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql
+   && docker-php-ext-install pdo pdo_mysql
