@@ -19,7 +19,7 @@ RUN addgroup --system --gid ${GID} ${USERNAME} && \
 RUN sed -i 's/user = www-data/user = ${USERNAME}/g' /usr/local/etc/php-fpm.d/www.conf
 RUN sed -i 's/group = www-data/group = ${USERNAME}/g' /usr/local/etc/php-fpm.d/www.conf
 
-# Install needed packets
+# Install needed packets for apt
 #RUN apt update && apt install -y \
 #    libfreetype6-dev \
 #    libjpeg62-turbo-dev \
@@ -28,10 +28,10 @@ RUN sed -i 's/group = www-data/group = ${USERNAME}/g' /usr/local/etc/php-fpm.d/w
 #    && docker-php-ext-configure gd --with-freetype --with-jpeg \
 #   && docker-php-ext-install pdo pdo_mysql
 
+# Install needed packets for apk
 RUN apk update && apk add --no-cache \
     freetype-dev \
     libjpeg-turbo-dev \
     libpng-dev \
-    iproute2 \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
    && docker-php-ext-install pdo pdo_mysql

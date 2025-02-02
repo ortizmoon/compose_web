@@ -1,8 +1,7 @@
 # Image source
 FROM nginx:alpine
 
-# Add needed packets
-# RUN apk update && apk add bash
+COPY ./nginx/conf/default.conf /etc/nginx/conf.d/default.conf
 
 # Arguments
 ARG USERNAME=customuser
@@ -24,8 +23,5 @@ RUN sed -i "s|user  nginx;|user  ${USERNAME};|g; s|pid /var/run/nginx.pid;|pid /
 # Switch back to root
 USER root
 
-#COPY ./app/public /var/www/html
+COPY ./app/public /var/www/html
 
-#COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
-
-#COPY ./nginx/default.conf /etc/nginx/conf.d/default.conf
